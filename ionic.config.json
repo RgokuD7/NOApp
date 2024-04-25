@@ -1,0 +1,7 @@
+{
+  "name": "NOApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
