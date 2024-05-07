@@ -1,0 +1,50 @@
+<ion-item #item [ngClass]="class" class="input" lines="none">
+  <ion-icon
+    *ngIf="icon"
+    slot="start"
+    [name]="icon"
+    [color]="iconColor"
+  ></ion-icon>
+  <ion-input
+    [type]="type"
+    [autocomplete]="autocomplete"
+    [label]="label"
+    labelPlacement="floating"
+    [formControl]="control"
+    (ionChange)="onChange()"
+    (ionInput)="onInput()"
+  ></ion-input>
+  <ion-icon
+    *ngIf="isPassword"
+    slot="end"
+    [color]="iconColor"
+    (click)="showOrHidePassword()"
+    [name]="hide ? 'eye-outline' : 'eye-off-outline'"
+  ></ion-icon>
+</ion-item>
+<div class="errors" *ngIf="errors">
+  <div *ngIf="control.hasError('required')">Este campo es obligatorio</div>
+  <div *ngIf="control.hasError('email')">
+    Ingrese un correo electrónico válido
+  </div>
+  <div *ngIf="control.hasError('minlength')">
+    Debe tener al menos
+    {{ control.errors["minlength"]["requiredLength"] || 0 }} caracteres
+  </div>
+  <div *ngIf="control.hasError('maxlength')">
+    Debe tener máximo
+    {{ control.errors["maxlength"]["requiredLength"] || 0 }} caracteres
+  </div>
+  <div *ngIf="control.hasError('pattern') && !isPassword">
+    El formato es incorrecto
+  </div>
+  <div *ngIf="control.hasError('pattern') && isPassword">
+    Contraseña insegura
+  </div>
+  <div *ngIf="control.hasError('wrong-password') && isPassword">
+    Contraseña incorrecta
+  </div>
+  <div *ngIf="control.hasError('wrong-email')">
+    Este email no está registrado
+  </div>
+</div>

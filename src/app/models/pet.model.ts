@@ -1,0 +1,18 @@
+export interface Pet{
+    id: string,
+    uid: string,
+    breed_id: string,
+    animal_gender_id: number,
+    names: string,
+    weight: number,
+    height: number,
+    size: number,
+    birthday: string,
+    age: number,
+    pet_age: number,
+    has_adopted_here: boolean,
+    color: string,
+    medical_info: string,
+    vaccine_info: string,
+    registration_date: string,
+}

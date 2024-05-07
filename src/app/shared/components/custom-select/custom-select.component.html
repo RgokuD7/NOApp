@@ -1,0 +1,17 @@
+<ion-item #item [ngClass]="class" class="item" lines="none" [id]="openWith">
+  <ion-icon slot="start" [name]="icon" color="primary"></ion-icon>
+  <ion-input *ngIf="!valueLabel" readonly="true" type="text" [label]="label" labelPlacement="floating" color="primary"></ion-input>
+  <ion-input *ngIf="valueLabel" readonly="true" type="text" [label]="label" value="{{valueLabel}}" labelPlacement="floating"></ion-input>
+</ion-item>
+<ion-modal #modal [trigger]="openWith">
+  <ng-template>
+    <ion-searchbar *ngIf="search" [placeholder]="searchLabel"  (ionInput)="onSearchChange($event)"></ion-searchbar>
+    <div class="block">
+      <ion-picker>
+        <ion-picker-column [value]="currentValue" (ionChange)="onPickerChange($event)">
+          <ion-picker-column-option *ngFor="let item of filteredOptions" value="{{item[0]}}">{{item[1]}}</ion-picker-column-option>
+        </ion-picker-column>
+      </ion-picker>
+    </div>
+  </ng-template>
+</ion-modal>

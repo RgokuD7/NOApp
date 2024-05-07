@@ -1,0 +1,20 @@
+<ion-item #item [ngClass]="class" class="item" lines="none" id="open-date-picker">
+  <ion-icon slot="start" name="calendar-outline" [color]="iconColor"></ion-icon>
+  <ion-input *ngIf="!datetime" readonly="true" type="text" [label]="label" labelPlacement="floating" color="primary"></ion-input>
+  <ion-input *ngIf="datetime" readonly="true" type="text" [label]="label" value="{{formattedDate}}" labelPlacement="floating"></ion-input>
+  <ion-label *ngIf="birthday && age > 1" [color]="iconColor" slot="end">{{age}} años</ion-label>
+</ion-item>
+<div class="errors" *ngIf="errors">Lo siento debes tener 7 años o más
+</div>
+<ion-modal trigger="open-date-picker" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+  <ng-template>
+    <div class="block">
+      <ion-datetime
+        (ionChange)="dateChange()"
+        [(ngModel)]="datetime"
+        presentation="date"
+        [preferWheel]="true"
+      ></ion-datetime>
+    </div>
+  </ng-template>
+</ion-modal>

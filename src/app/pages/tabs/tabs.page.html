@@ -1,0 +1,31 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button (click)="selectTab('home')" tab="home" href="/tabs/home">
+      <ion-icon [name]="getIcon('home', 'home-outline', 'home')"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button (click)="selectTab('map')" tab="map" href="/tabs/map">
+      <ion-icon [name]="getIcon('map', 'map-outline', 'map')"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button
+      (click)="selectTab('reports')"
+      tab="reports"
+      href="/tabs/reports"
+    >
+      <ion-icon
+        [name]="getIcon('reports', 'newspaper-outline', 'newspaper')"
+      ></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button
+      (click)="selectTab('user-profile')"
+      tab="user-profile"
+      href="/tabs/user-profile"
+    >
+      <ion-icon
+        [name]="getIcon('user-profile', 'person-outline', 'person')"
+      ></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

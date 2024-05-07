@@ -1,0 +1,35 @@
+<ion-content [fullscreen]="true">
+  <ion-img class="catdog-img" src="/assets/icon/dogcat.svg"></ion-img>
+  <h1>Bienvenido a NOApp</h1>
+  <h2>Inicie sesión para continuar</h2>
+  <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+    <app-custom-input
+      icon="mail-outline"
+      autocomplete="email"
+      type="email"
+      label="Correo"
+      [control]="authForm.controls.email"
+    >
+    </app-custom-input>
+
+    <app-custom-input
+      icon="lock-closed-outline"
+      autocomplete="password"
+      type="password"
+      label="Contraseña"
+      [control]="authForm.controls.password"
+    >
+    </app-custom-input>
+    <ion-text color="primary">
+      <p routerLink="forgot-password" class="ion-text-center">¿Olvidaste tu contraseña?</p>
+    </ion-text>
+
+    <ion-button type="submit" expand="block" [disabled]="authForm.invalid"
+      >Iniciar sesión
+    </ion-button>
+    <ion-text color="primary">
+      <p class="ion-text-center">o</p>
+    </ion-text>
+    <ion-button routerLink="sign-up" expand="block">Crear cuenta </ion-button>
+  </form>
+</ion-content>

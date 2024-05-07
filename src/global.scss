@@ -34,4 +34,18 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+
+ion-input.custom.ios .input-bottom .helper-text,
+ion-input.custom.ios .input-bottom .counter,
+ion-input.custom.md .input-bottom .helper-text,
+ion-input.custom.md .input-bottom .counter {
+  color: var(--ion-color-primary);
+}
+
+ion-toast.custom-toast {
+  --border-width: 2px;
+  --border-color: green;
+  --box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
+}
