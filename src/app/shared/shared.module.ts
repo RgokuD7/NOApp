@@ -7,10 +7,25 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomDatetimePickerComponent } from './components/custom-datetime-picker/custom-datetime-picker.component';
 import { CustomSelectComponent } from './components/custom-select/custom-select.component';
+import { CustomToggleComponent } from './components/custom-toggle/custom-toggle.component';
 
 @NgModule({
-  declarations: [CustomInputComponent, LogoComponent,HeaderComponent,CustomDatetimePickerComponent, CustomSelectComponent],
-  exports: [CustomInputComponent, LogoComponent,HeaderComponent,CustomDatetimePickerComponent, CustomSelectComponent],
+  declarations: [
+    CustomInputComponent,
+    LogoComponent,
+    HeaderComponent,
+    CustomDatetimePickerComponent,
+    CustomSelectComponent,
+    CustomToggleComponent,
+  ],
+  exports: [
+    CustomInputComponent,
+    LogoComponent,
+    HeaderComponent,
+    CustomDatetimePickerComponent,
+    CustomSelectComponent,
+    CustomToggleComponent,
+  ],
   imports: [CommonModule, IonicModule, ReactiveFormsModule, FormsModule],
 })
 export class SharedModule {}

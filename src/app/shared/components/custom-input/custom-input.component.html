@@ -5,6 +5,12 @@
     [name]="icon"
     [color]="iconColor"
   ></ion-icon>
+  <i
+    *ngIf="faIcon"
+    slot="start"
+    [class]="faIcon"
+    [style]="'color:'+faColor+'; font-size: x-large'"
+  ></i>
   <ion-input
     [type]="type"
     [autocomplete]="autocomplete"
