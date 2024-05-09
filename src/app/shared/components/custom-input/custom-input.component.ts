@@ -12,7 +12,9 @@ export class CustomInputComponent implements OnInit {
   @Input() label!: String;
   @Input() autocomplete!: String;
   @Input() icon!: String;
+  @Input() faIcon!: String;
   iconColor = 'primary';
+  faColor = 'var(--ion-color-primary)';
 
   @ViewChild('item') item: ElementRef;
   class: string = 'normal-input';
@@ -64,10 +66,12 @@ export class CustomInputComponent implements OnInit {
     if (this.control.errors && this.firstTry) {
       this.class = 'error-input';
       this.iconColor = 'danger';
+      this.faColor = 'var(--ion-color-danger)';
       this.errors = this.errors = true;
     } else {
       this.class = 'normal-input';
       this.iconColor = 'primary';
+      this.faColor = 'var(--ion-color-primary)';
       this.errors = this.errors = false;
     }
   }

@@ -1,0 +1,20 @@
+<ion-item>
+  <ion-icon
+    *ngIf="icon"
+    slot="start"
+    [name]="icon"
+    [color]="iconColor"
+  ></ion-icon>
+  <i
+    *ngIf="faIcon"
+    slot="start"
+    [class]="faIcon"
+    [style]="'color:' + faColor + '; font-size: x-large'"
+  ></i>
+  <ion-toggle [formControl]="control" [color]="iconColor">
+    <ion-label [color]="iconColor">{{ label }}</ion-label>
+    <ion-note *ngIf="note" style="color: var(--ion-color-secondary-shade)">{{
+      note
+    }}</ion-note>
+  </ion-toggle>
+</ion-item>
