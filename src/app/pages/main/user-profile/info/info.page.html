@@ -1,0 +1,97 @@
+<ion-content [fullscreen]="true">
+  <ion-img class="catdog-img" src="/assets/icon/dogcat.svg"></ion-img>
+  <div *ngIf="section == 1">
+    <h1>Estás a unos pasos de completar tu perfil</h1>
+    <h2>Rellena esta información adicional</h2>
+  </div>
+  <div *ngIf="section == 2">
+    <h1>Tu perfil está listo</h1>
+    <h2>Pero nos gustaría saber algo antes</h2>
+  </div>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="section == 1">
+      <app-custom-select
+      openWith="gender"
+      label="Genero"
+      [options]="genders"
+      [currentValue]="this.user().gender"
+      (optionChange)="onGenderChange($event)"
+      icon="transgender-outline"
+      ></app-custom-select>
+      <app-custom-datetime-picker
+        label="Fecha de nacimiento"
+        [birthday]="true"
+        [minAge]=7
+        [datetime]=birthday
+        (datetimeChange)="onBirthDayChange($event)"
+      ></app-custom-datetime-picker>
+      <app-custom-input
+        icon="call-outline"
+        autocomplete="tel"
+        type="tel"
+        label="Teléfono"
+        [control]="userForm.controls.phone"
+      ></app-custom-input>
+      <app-custom-input
+        icon="home-outline"
+        type="text"
+        label="Dirección"
+        [control]="userForm.controls.address"
+      ></app-custom-input>
+      <app-custom-select
+      openWith="region"
+      label="Región"
+      [currentValue]="this.user().region"
+      [options]="regions"
+      (optionChange)="onRegionChange($event)"
+      icon="map-outline"
+      [search]="true"
+      searchLabel="Buscar Región"
+      ></app-custom-select>
+      <app-custom-select
+      openWith="comuna"
+      label="Comuna"
+      [currentValue]="this.user().comuna"
+      [options]="filteredComunas"
+      (optionChange)="onComunaChange($event)"
+      icon="navigate-outline"
+      [search]="true"
+      searchLabel="Buscar Comuna"
+      ></app-custom-select>
+      <ion-button
+        (click)="signPersonalInfo()"
+        expand="block"
+        [disabled]="userForm.controls.birthday.errors || userForm.controls.age.errors"
+        >Continuar
+      </ion-button>
+    </div>
+    <div *ngIf="section == 2">
+      <app-custom-input
+        icon="paw-outline"
+        type="number"
+        label="¿Cuantas mascotas tienes?"
+        [control]="userForm.controls.pets_number"
+      ></app-custom-input>
+      <ion-item>
+        <ion-toggle formControlName="pet_foster" ion-text="wrap"
+          >¿Acojes animales temporalmente?</ion-toggle
+        >
+      </ion-item>
+      <ion-item>
+        <ion-toggle formControlName="has_vet">¿Tienes veterinaria?</ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-toggle formControlName="has_store"
+          >¿Vendes productos para aniamles?
+        </ion-toggle>
+      </ion-item>
+      <ion-button
+        type="submit"
+        expand="block"
+        [disabled]="userForm.controls.pets_number.errors"
+        >Terminar Registro
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
+
