@@ -1,32 +1,3 @@
-<!-- <ion-item
-  #item
-  [ngClass]="class"
-  class="item"
-  lines="none"
-  id="open-date-picker"
->
-  <ion-icon slot="start" name="calendar-outline" [color]="iconColor"></ion-icon>
-  <ion-input
-    *ngIf="!datetime"
-    readonly="true"
-    type="text"
-    [label]="label"
-    labelPlacement="floating"
-    color="primary"
-  ></ion-input>
-  <ion-input
-    *ngIf="datetime"
-    readonly="true"
-    type="text"
-    [label]="label"
-    value="{{ formattedDate }}"
-    labelPlacement="floating"
-  ></ion-input>
-  <ion-label *ngIf="birthday && age > 1" [color]="iconColor" slot="end"
-    >{{ age }} años</ion-label
-  >
-  <p>{{ stringAge }}</p>
-</ion-item> -->
 <ion-list
   #item
   [ngClass]="class"
@@ -92,6 +63,7 @@
       <ion-datetime
         (ionChange)="dateChange()"
         [(ngModel)]="datetime"
+        [value]="datetime"
         presentation="date"
         [preferWheel]="true"
       ></ion-datetime>

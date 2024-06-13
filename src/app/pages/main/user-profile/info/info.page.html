@@ -22,7 +22,7 @@
         label="Fecha de nacimiento"
         [birthday]="true"
         [minAge]=7
-        [datetime]=birthday
+        [datetime]="this.userForm.value.birthday"
         (datetimeChange)="onBirthDayChange($event)"
       ></app-custom-datetime-picker>
       <app-custom-input

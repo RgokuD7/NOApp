@@ -1,0 +1,44 @@
+ion-card {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  ion-card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    ion-card-title {
+      color: var(--ion-color-primary);
+    }
+    .card-body {
+      .birthday-section {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        column-gap: 5px;
+      }
+      .specie-section {
+        display: flex;
+        gap: 5px;
+      }
+    }
+  }
+  ion-card-content {
+    align-self: center;
+    justify-self: center;
+    padding: 10px;
+    ion-img {
+      width: 70px;
+      height: 70px;
+      overflow: hidden;
+      border: 2px solid var(--ion-color-primary);
+      object-fit: cover;
+      object-position: center;
+      border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      -ms-border-radius: 50%;
+      -o-border-radius: 50%;
+    }
+  }
+}

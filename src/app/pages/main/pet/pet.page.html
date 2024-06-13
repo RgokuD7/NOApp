@@ -1,13 +1,37 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>pet</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">pet</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="page" [fullscreen]="true">
+  <app-header title="Mis mascotas" backButtom="/tabs/user-profile"></app-header>
+  <ion-card *ngFor="let pet of pets" (press)="onPress(pet)">
+    <ion-card-header>
+      <ion-card-title>{{pet.names}}</ion-card-title>
+      <div class="card-body">
+        <div *ngIf="pet.birthday" class="birthday-section">
+          <p>
+            <i class="fa-solid fa-cake-candles"></i>
+            {{utilSvc.dateToString(pet.birthday, 'dm')}}
+          </p>
+          <p>
+            <i class="fa-solid fa-clock"></i>
+            {{utilSvc.calculateStringAge(pet.birthday, 'ym')}}
+          </p>
+        </div>
+        <div class="specie-section">
+          <p *ngIf="pet.specie">
+            <i class="fa-solid fa-paw"></i>{{getSpecieName(pet.specie)}}
+          </p>
+          <p *ngIf="pet.animal_gender && pet.specie">|</p>
+          <p *ngIf="pet.animal_gender">
+            {{pet.animal_gender == 1 ? 'Hembra' : 'Macho'}}
+          </p>
+        </div>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-img [src]="pet.photo"></ion-img>
+    </ion-card-content>
+  </ion-card>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab-button (click)="openAddPetModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

@@ -30,6 +30,7 @@ export class CustomDatetimePickerComponent implements OnInit {
     if (this.faIcon) {
       this.icon = '';
     }
+    if(this.datetime) this.dateChange();
   }
 
   dateChange() {
@@ -65,14 +66,14 @@ export class CustomDatetimePickerComponent implements OnInit {
     const days = ageDate.getUTCDate() - 1;
     let result = '';
 
-    if (option.includes('y') && years != 0) {
+    if (option.includes('y') && years !== 0) {
       result += years === 1 ? '1 año' : `${years} años`;
     }
-    if (option.includes('m') && months != 0) {
+    if (option.includes('m') && months !== 0) {
       if (result !== '') result += ' ';
       result += months === 1 ? '1 mes' : `${months} meses`;
     }
-    if (option.includes('d') && days != 0) {
+    if (option.includes('d') && days !== 0) {
       if (result !== '') result += ' ';
       result += days === 1 ? '1 día' : `${days} dias`;
     }

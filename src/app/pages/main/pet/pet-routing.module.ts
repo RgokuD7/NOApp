@@ -7,8 +7,13 @@ const routes: Routes = [
   {
     path: '',
     component: PetPage
-  },  {
+  },
+  {
     path: 'add-pet',
+    loadChildren: () => import('./add-pet/add-pet.module').then( m => m.AddPetPageModule)
+  },
+  {
+    path: 'add-pet/:id',
     loadChildren: () => import('./add-pet/add-pet.module').then( m => m.AddPetPageModule)
   }
 

@@ -13,19 +13,18 @@ const routes: Routes = [
     path: 'tabs',
     loadChildren: () =>
       import('./pages/tabs/tabs.module').then((m) => m.TabsPageModule),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard]
   },
   {
     path: 'main',
     loadChildren: () =>
       import('./pages/main/main.module').then((m) => m.MainPageModule),
-    canActivate: [AuthGuard],
   },
   {
     path: 'auth',
     loadChildren: () =>
       import('./pages/auth/auth.module').then((m) => m.AuthPageModule),
-    canActivate: [noAuthGuard],
+    canActivate: [noAuthGuard]
   },
 ];
 @NgModule({

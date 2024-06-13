@@ -1,0 +1,111 @@
+<div class="container">
+  <div *ngIf="!show" class="content loading">
+    <i class="fa-solid fa-spinner advice"></i>
+  </div>
+  <div *ngIf="show == 'same'" class="content warning">
+    <h1>{{ pet.names }} ya tiene Registrado este Chip</h1>
+    <i class="fa-solid fa-circle-exclamation advice"></i>
+  </div>
+  <div *ngIf="show == 'owner'" class="content warning">
+    <h1>{{ pet.names }} tiene Registrado este Chip</h1>
+    <h2>No puedes registrar este chip en dos mascotas</h2>
+    <i class="fa-solid fa-circle-exclamation advice"></i>
+  </div>
+  <div *ngIf="show == 'not-owner'" class="content invalid">
+    <h1>Este chip ya pertenece a una mascota con otro dueño</h1>
+    <h3>Si lo encontraste, contacta al dueño</h3>
+    <h3>Si lo compraste, pide la desvinculación del chip</h3>
+    <i class="fa-solid fa-circle-xmark advice"></i>
+  </div>
+  <div *ngIf="show == 'valid'" class="content valid">
+    <h1>Chip escaneado con exito</h1>
+    <i class="fa-regular fa-circle-check advice"></i>
+  </div>
+  <div *ngIf="show == 'show'" class="content valid">
+    <div class="pet-info">
+      <p>Mascota</p>
+      <ion-img
+        class="pet-img"
+        [src]="pet.photo"
+        *ngIf="pet.photo != '/assets/icon/pet-avatar.png'"
+      ></ion-img>
+      <h1>{{ pet.names }}</h1>
+      <div *ngIf="pet.birthday" class="birthday-section">
+        <p>
+          <i class="fa-solid fa-cake-candles"></i>
+          {{ utilSvc.dateToString(pet.birthday, "dm") }}
+        </p>
+        <p>
+          <i class="fa-solid fa-clock"></i>
+          {{ utilSvc.calculateStringAge(pet.birthday, "ym") }}
+        </p>
+      </div>
+      <div class="specie-section">
+        <p *ngIf="pet.specie">
+          <i class="fa-solid fa-paw"></i>{{ getSpecieName(pet.specie) }}
+        </p>
+        <p *ngIf="pet.animal_gender && pet.specie">|</p>
+        <p *ngIf="pet.animal_gender">
+          {{ pet.animal_gender == 1 ? "Hembra" : "Macho" }}
+        </p>
+      </div>
+    </div>
+    <div class="owner-info">
+      <p>Responsable</p>
+      <ion-img
+        class="owner-img"
+        [src]="owner.profile_img"
+        *ngIf="owner.profile_img"
+      ></ion-img>
+      <h1>{{ owner.names }}</h1>
+      <p>&#64;{{ owner.username }}</p>
+      <p (click)="utilSvc.copyToClipboard(owner.email)">
+        {{ owner.email }} <i class="fa-solid fa-copy"></i>
+      </p>
+      <p (click)="utilSvc.copyToClipboard(owner.phone.toString())" *ngIf="owner.phone">
+        {{ owner.phone }} <i class="fa-solid fa-copy"></i>
+      </p>
+    </div>
+  </div>
+  <ion-button
+    *ngIf="button == 'valid'"
+    color="primary"
+    (click)="utilSvc.dismissModal({ valid: true })"
+    expand="block"
+  >
+    Aceptar
+  </ion-button>
+  <ion-button
+    *ngIf="button == 'invalid'"
+    color="danger"
+    (click)="utilSvc.dismissModal({ valid: false })"
+    expand="block"
+  >
+    Aceptar
+  </ion-button>
+  <ion-button
+    *ngIf="button == 'acept'"
+    color="primary"
+    (click)="utilSvc.dismissModal({ valid: false })"
+    expand="block"
+  >
+    Aceptar
+  </ion-button>
+  <ion-button
+    *ngIf="button == 'show-info'"
+    color="danger"
+    (click)="showInfo()"
+    expand="block"
+  >
+    Ver Información
+  </ion-button>
+  <ion-button
+    *ngIf="button == 'warning'"
+    color="tertiary"
+    (click)="utilSvc.dismissModal({ valid: false })"
+    expand="block"
+  >
+    Aceptar
+  </ion-button>
+  
+</div>

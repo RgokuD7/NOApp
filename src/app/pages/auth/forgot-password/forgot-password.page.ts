@@ -28,14 +28,18 @@ export class ForgotPasswordPage implements OnInit {
   birthday: string;
 
   recoveryForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email])
+    email: new FormControl('', [Validators.required, Validators.email]),
   });
 
   ngOnInit() {}
 
   async onSubmit() {
     if (this.recoveryForm.valid) {
-      const loading = await this.utilSvc.loading('Verificando correo');
+      const loading = await this.utilSvc.presentLoading({
+        message: 'Verificando correo',
+        keyboardClose: true,
+        spinner: 'bubbles',
+      });
       await loading.present();
       this.firebaseSvc
         .sendRecoberyEmail(this.recoveryForm.value.email)
@@ -46,7 +50,7 @@ export class ForgotPasswordPage implements OnInit {
         .catch((error) => {
           if (error.code == 'auth/user-not-found') {
             console.log(error.code);
-            this.recoveryForm.get('email').setErrors({'wrong-email': true});
+            this.recoveryForm.get('email').setErrors({ 'wrong-email': true });
             this.recoveryForm.get('email').markAsDirty();
           }
         })

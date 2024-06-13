@@ -1,13 +1,107 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>add-pet</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <ion-header>
     <ion-toolbar>
-      <ion-title size="large">add-pet</ion-title>
+      <ion-title>Modal</ion-title>
+      <ion-buttons slot="end">
+        <ion-button>Close</ion-button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
+  <div *ngIf="!edit" class="profile-img" (click)="takeImage()">
+    <h1>Crea un perfil para tu mascota</h1>
+    <img [src]="petForm.value.photo"/>
+    <h6>Presiona la iamgen de arriba y sube una foto de tu mascota</h6>
+    <h3>Completa la siguiente información para conocer más a tu mascota</h3>
+  </div>
+  <div *ngIf="edit" class="profile-img" (click)="takeImage()">
+    <h1>Edita el perfil de tu mascota</h1>
+    <img [src]="petForm.value.photo"/>
+    <h6>Presiona la imagen de arriba para cambiar la foto de tu mascota</h6>
+    <h3>Actualiza la siguiente información sobre tu mascota</h3>
+  </div>
+  <form (ngSubmit)="onSubmit()" #form="ngForm">
+    <div *ngIf="section == 1">
+      <app-custom-input
+        faIcon="fa-solid fa-paw"
+        type="text"
+        label="Nombre"
+        [control]="petForm.controls.names"
+      ></app-custom-input>
+      <app-custom-select
+        openWith="species"
+        label="Especie"
+        [options]="species"
+        (optionChange)="onSpecieChange($event)"
+        faIcon="fa-solid fa-dog"
+        [search]="true"
+        searchLabel="Buscar especie"
+      ></app-custom-select>
+      <app-custom-input
+        faIcon="fa-solid fa-shield-dog"
+        type="text"
+        label="Raza"
+        [control]="petForm.controls.breed"
+      ></app-custom-input>
+      <app-custom-select
+        openWith="pet_gender"
+        label="Genero del animal"
+        [options]="pet_gender"
+        (optionChange)="onGenderChange($event)"
+        faIcon="fa-solid fa-mars-and-venus"
+      ></app-custom-select>
+      <app-custom-datetime-picker
+        label="Fecha de nacimiento"
+        [birthday]="true"
+        [petBirthday]="this.petForm.controls.specie.value"
+        faIcon="fa-solid fa-calendar-day"
+        (datetimeChange)="onBirthDayChange($event)"
+      ></app-custom-datetime-picker>
+      <ion-button
+        (click)="firstSection()"
+        expand="block"
+        [disabled]="petForm.controls.names.invalid"
+        >Continuar
+      </ion-button>
+    </div>
+    <div *ngIf="section == 2">
+      <app-custom-input
+        faIcon="fa-solid fa-weight-scale"
+        type="number"
+        label="Peso (kg)"
+        [control]="petForm.controls.weight"
+      ></app-custom-input>
+      <app-custom-input
+        faIcon="fa-solid fa-ruler-vertical"
+        type="number"
+        label="Altura (cm)"
+        [control]="petForm.controls.height"
+      ></app-custom-input>
+      <app-custom-input
+        faIcon="fa-solid fa-palette"
+        type="text"
+        label="Color"
+        [control]="petForm.controls.color"
+      ></app-custom-input>
+      <app-custom-text-area
+        faIcon="fa-solid fa-notes-medical"
+        type="text"
+        label="Información medica"
+        [control]="petForm.controls.medical_info"
+      >
+      </app-custom-text-area>
+      <app-custom-text-area
+        faIcon="fa-solid fa-syringe"
+        type="text"
+        label="Vacunas"
+        [control]="petForm.controls.vaccine_info"
+      >
+      </app-custom-text-area>
+      <ion-button *ngIf="!edit" type="submit" expand="block"
+      >Crear
+    </ion-button>
+    <ion-button *ngIf="edit" type="submit" expand="block"
+      >Editar
+    </ion-button>
+    </div>
+  </form>
 </ion-content>

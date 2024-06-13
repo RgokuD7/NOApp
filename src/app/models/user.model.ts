@@ -14,7 +14,6 @@ export interface User{
     has_vet: boolean,
     has_store: boolean,
     pet_foster: boolean,
-    donations: number,
     address: string,
     comuna: string,
     region: string,

@@ -30,13 +30,10 @@ export class CustomInputComponent implements OnInit {
     if (this.type == 'password') this.isPassword = true;
     this.control.statusChanges.subscribe(status => {
       if (status === 'INVALID') {
-        console.log(this.control.errors);
         if(this.control.hasError('wrong-password')) {
-          console.log('status');
           this.showErrors();
         }
         if(this.control.hasError('wrong-email')) {
-          console.log('status');
           this.showErrors();
         }
       }

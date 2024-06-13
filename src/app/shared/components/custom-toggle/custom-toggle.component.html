@@ -13,8 +13,8 @@
   ></i>
   <ion-toggle [formControl]="control" [color]="iconColor">
     <ion-label [color]="iconColor">{{ label }}</ion-label>
-    <ion-note *ngIf="note" style="color: var(--ion-color-secondary-shade)">{{
+    <ion-label *ngIf="note" [color]="iconColor">{{
       note
-    }}</ion-note>
+    }}</ion-label>
   </ion-toggle>
 </ion-item>

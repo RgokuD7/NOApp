@@ -1,0 +1,140 @@
+<app-header
+  [title]="pet ? 'Editar Mascota' : 'Registrar Mascota'"
+  [isModal]="true"
+>
+</app-header>
+<ion-content class="modal">
+  <div *ngIf="!pet && section == 1" class="profile-img">
+    <h3>Crea un perfil para tu mascota</h3>
+    <img [src]="petForm.value.photo" (click)="takeImage()" />
+    <h6>Presiona la iamgen de arriba y sube una foto de tu mascota</h6>
+    <h3>Completa la siguiente información para conocer más a tu mascota</h3>
+  </div>
+  <div *ngIf="pet && section == 1" class="profile-img">
+    <h1>Edita el perfil de tu mascota</h1>
+    <img [src]="petForm.value.photo" (click)="takeImage()" />
+    <h6>Presiona la imagen de arriba para cambiar la foto de tu mascota</h6>
+    <h3>Actualiza la siguiente información sobre tu mascota</h3>
+  </div>
+  <div *ngIf="pet && section == 2" class="health-img">
+    <ion-img class="catdog-img" src="/assets/icon/pet-health.png"></ion-img>
+    <h3>Actualiza información extra de tu mascota</h3>
+  </div>
+  <div *ngIf="!pet && section == 2" class="health-img">
+    <ion-img class="catdog-img" src="/assets/icon/pet-health.png"></ion-img>
+    <h3>Ingresa información extra de tu mascota</h3>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #form="ngForm">
+    <div *ngIf="section == 1">
+      <app-custom-input
+        faIcon="fa-solid fa-paw"
+        type="text"
+        label="Nombre"
+        [control]="petForm.controls.names"
+      ></app-custom-input>
+      <app-custom-select
+        openWith="species"
+        label="Especie"
+        [options]="species"
+        [currentValue]="petForm.value.specie"
+        (optionChange)="onSpecieChange($event)"
+        faIcon="fa-solid fa-dog"
+        [search]="true"
+        searchLabel="Buscar especie"
+      ></app-custom-select>
+      <app-custom-input
+        faIcon="fa-solid fa-shield-dog"
+        type="text"
+        label="Raza"
+        [control]="petForm.controls.breed"
+      ></app-custom-input>
+      <app-custom-select
+        openWith="pet_gender"
+        label="Genero del animal"
+        [options]="pet_gender"
+        [currentValue]="petForm.value.animal_gender"
+        (optionChange)="onGenderChange($event)"
+        faIcon="fa-solid fa-mars-and-venus"
+      ></app-custom-select>
+      <app-custom-datetime-picker
+        label="Fecha de nacimiento"
+        [birthday]="true"
+        [petBirthday]="this.petForm.controls.specie.value"
+        [datetime]="this.petForm.value.birthday"
+        faIcon="fa-solid fa-calendar-day"
+        (datetimeChange)="onBirthDayChange($event)"
+      ></app-custom-datetime-picker>
+      <ion-button
+        (click)="nextSection()"
+        expand="block"
+        [disabled]="petForm.controls.names.invalid"
+        >Continuar
+      </ion-button>
+    </div>
+    <div *ngIf="section == 2">
+      <app-custom-input
+        faIcon="fa-solid fa-weight-scale"
+        type="number"
+        label="Peso (kg)"
+        [control]="petForm.controls.weight"
+      ></app-custom-input>
+      <app-custom-input
+        faIcon="fa-solid fa-ruler-vertical"
+        type="number"
+        label="Altura (cm)"
+        [control]="petForm.controls.height"
+      ></app-custom-input>
+      <app-custom-input
+        faIcon="fa-solid fa-palette"
+        type="text"
+        label="Color"
+        [control]="petForm.controls.color"
+      ></app-custom-input>
+      <app-custom-text-area
+        faIcon="fa-solid fa-notes-medical"
+        type="text"
+        label="Información medica"
+        [control]="petForm.controls.medical_info"
+      >
+      </app-custom-text-area>
+      <app-custom-text-area
+        faIcon="fa-solid fa-syringe"
+        type="text"
+        label="Vacunas"
+        [control]="petForm.controls.vaccine_info"
+      >
+      </app-custom-text-area>
+      <ion-button (click)="nextSection()" expand="block">Continuar </ion-button>
+    </div>
+    <div *ngIf="section == 3" class="health-img">
+      <h1>Identificador de tu mascota</h1>
+      <ion-img class="catdog-img" src="/assets/icon/qr.png"></ion-img>
+      <h3>QR de tu mascota</h3>
+      <h3>
+        Ademas puedes registrar un chip nfc si tu dispositivo lo perimite y
+        posees uno
+      </h3>
+    </div>
+    <div *ngIf="section == 3">
+      <ion-button (click)="openNfcModal()" expand="block">{{
+        pet ? "Escanear nuevo chip" : "Escanear chip"
+      }}</ion-button>
+        <div *ngIf="!petForm.controls.chip_id.value && chip_valid == 0" class="chip no-chip">
+          <h3>Sin chip</h3>
+          <i class="fa-brands fa-nfc-symbol"></i>
+        </div>
+        <div *ngIf="chip_valid == -1" class="chip error">
+          <h3>Chip no guardado</h3>
+          <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        <div *ngIf="chip_valid == 1 || petForm.controls.chip_id.value" class="chip valid">
+          <h3>Chip escaneado correctamente</h3>
+          <i class="fa-regular fa-circle-check"></i>
+        </div>
+      <ion-button type="submit" expand="block">{{
+        pet ? "Actualizar" : "Registrar"
+      }}</ion-button>
+    </div>
+  </form>
+</ion-content>

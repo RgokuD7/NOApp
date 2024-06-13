@@ -1,0 +1,33 @@
+<ion-item #item [ngClass]="class" class="input" lines="none">
+  <ion-icon
+    *ngIf="icon"
+    slot="start"
+    [name]="icon"
+    [color]="iconColor"
+  ></ion-icon>
+  <i
+    *ngIf="faIcon"
+    slot="start"
+    [class]="faIcon"
+    [style]="'color:' + faColor + '; font-size: x-large'"
+  ></i>
+  <ion-textarea
+    [label]="label"
+    labelPlacement="floating"
+    [formControl]="control"
+    [autoGrow]="true"
+    [style]="'color:' + faColor + ';'"
+  >
+  </ion-textarea>
+</ion-item>
+<div class="errors" *ngIf="errors">
+  <div *ngIf="control.hasError('required')">Este campo es obligatorio</div>
+  <div *ngIf="control.hasError('minlength')">
+    Debe tener al menos
+    {{ control.errors["minlength"]["requiredLength"] || 0 }} caracteres
+  </div>
+  <div *ngIf="control.hasError('maxlength')">
+    Debe tener máximo
+    {{ control.errors["maxlength"]["requiredLength"] || 0 }} caracteres
+  </div>
+</div>

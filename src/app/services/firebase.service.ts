@@ -16,10 +16,20 @@ import {
   collection,
   collectionData,
   query,
+  updateDoc,
+  deleteDoc,
 } from '@angular/fire/firestore';
 import { User } from '../models/user.model';
 import { UtilsService } from './utils.service';
 import { addDoc } from 'firebase/firestore';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import {
+  getStorage,
+  uploadString,
+  ref,
+  getDownloadURL,
+  deleteObject
+} from 'firebase/storage';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +38,7 @@ export class FirebaseService {
   auth = inject(AngularFireAuth);
   firestore = inject(AngularFirestore);
   utilSvc = inject(UtilsService);
+  storage = inject(AngularFireStorage);
 
   getAuth() {
     return getAuth();
@@ -61,6 +72,14 @@ export class FirebaseService {
     return setDoc(doc(getFirestore(), path), data);
   }
 
+  updateDocument(path: string, data: any) {
+    return updateDoc(doc(getFirestore(), path), data);
+  }
+
+  deleteDocument(path: string) {
+    return deleteDoc(doc(getFirestore(), path));
+  }
+
   async getDocument(path: string) {
     return (await getDoc(doc(getFirestore(), path))).data();
   }
@@ -74,11 +93,40 @@ export class FirebaseService {
     return collectionData(query(ref, collectionQuery), { idField: 'id' });
   }
 
+  async getUsuario(uid: string) {
+    let path = `users/${uid}`;
+    this.getDocument(path)
+      .then(async (user: User) => {
+        await this.utilSvc.saveInLocalStorage('user', user);
+        this.utilSvc.routerLink('tabs');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  //* Save Images in Firebase Storage
+  async uploadImage(path, data_url) {
+    return uploadString(ref(getStorage(), path), data_url, 'data_url').then(
+      () => {
+        return getDownloadURL(ref(getStorage(), path));
+      }
+    );
+  }
+
+  async getFilePath(url: string) {
+    return ref(getStorage(), url).fullPath;
+  }
+
+  async deleteFile(path: string){
+    return deleteObject(ref(getStorage(), path));
+  }
+
   //* Create Species
 
   async setSpecies() {
     this.species.forEach((specie, index) => {
-      let path = `species/${index+1}`;
+      let path = `species/${index + 1}`;
       this.setDocument(path, specie)
         .then((resp) => {
           console.log(resp);
@@ -89,11 +137,11 @@ export class FirebaseService {
     });
   }
 
-  //* Create Regions 
+  //* Create Regions
 
   async setRegiones() {
     this.regions.forEach((region, index) => {
-      let path = `regions/${index+1}`;
+      let path = `regions/${index + 1}`;
       this.setDocument(path, region)
         .then((resp) => {
           console.log(resp);
@@ -539,8 +587,6 @@ export class FirebaseService {
     { specie: 'Cobaya' },
     { specie: 'Hurón' },
     { specie: 'Erizo' },
-    { specie: 'Iguana' }
+    { specie: 'Iguana' },
   ];
-
-  
 }

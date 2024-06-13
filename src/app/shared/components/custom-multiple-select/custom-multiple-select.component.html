@@ -1,0 +1,29 @@
+<div class="page">
+  <h3 *ngIf="label">{{ label }}</h3>
+  <p *ngIf="message">{{ message }}</p>
+  <ion-list>
+    <ion-item>
+      <ion-button [id]="openWith" expand="block">Agregar</ion-button>
+    </ion-item>
+  </ion-list>
+</div>
+<ion-modal
+  #modal
+  [trigger]="openWith"
+  [breakpoints]="[0, 1]"
+  initialBreakpoint="1"
+  class="modal"
+>
+  <ng-template>
+    <div class="content">
+      <ion-list>
+        <ion-item *ngFor="let opt of options">
+          <div *ngIf="!isInCurrentValues(opt[0])">
+            <i slot="start" class="fa-solid fa-circle-plus"></i>
+            <ion-label>{{ opt[1] }}</ion-label>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ng-template>
+</ion-modal>

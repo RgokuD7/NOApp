@@ -1,8 +1,9 @@
-export interface adoption{
+export interface Adoption{
     id: string,
     uid: string,
     title:string,
     pets_number: number,
+    pets: string[],
     description: string,
     needs: string,
     img: string,

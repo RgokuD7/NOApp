@@ -1,0 +1,87 @@
+.container{
+  display: grid;
+  place-items: center;
+}
+.content {
+  height: max-content;
+  margin: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  i.advice {
+    font-size: 70vw;
+  }
+}
+ion-button {
+  width: 70%;
+  margin: 10px auto 15px;
+}
+.valid {
+  color: var(--ion-color-primary);
+}
+.valid-button {
+  background: var(--ion-color-primary);
+}
+.invalid {
+  color: var(--ion-color-danger);
+}
+.invalid-button {
+  background: var(--ion-color-danger);
+}
+.warning {
+  color: var(--ion-color-tertiary);
+}
+.owner-button {
+  background: var(--ion-color-tertiary);
+}
+
+.loading {
+  color: var(--ion-color-primary);
+  i {
+    animation: spin 3s ease-in-out infinite;
+    -webkit-animation: spin 3s ease-in-out infinite;
+  }
+}
+.pet-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin: 5px;
+  .pet-img {
+    width: 70%;
+    overflow: hidden;
+    border: 2px solid var(--ion-color-primary);
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+  }
+
+  .birthday-section {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    column-gap: 5px;
+  }
+  .specie-section {
+    display: flex;
+    gap: 5px;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

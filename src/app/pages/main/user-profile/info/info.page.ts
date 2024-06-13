@@ -28,7 +28,6 @@ export class InfoPage implements OnInit {
 
   uid: string = '';
   section: number = 1;
-  birthday: string = this.user().birthday;
   genders: any[] = [];
   regions: any[] = [];
   comunas: any[] = [];
@@ -48,8 +47,11 @@ export class InfoPage implements OnInit {
       Validators.required,
       Validators.minLength(4),
     ]),
-    birthday: new FormControl(this.user().birthday, [Validators.required]),
-    age: new FormControl(this.user().age, [
+    birthday: new FormControl(
+      this.user().birthday ? this.user().birthday : '',
+      [Validators.required]
+    ),
+    age: new FormControl(this.user().age ? this.user().age : null, [
       Validators.required,
       Validators.min(7),
     ]),
@@ -58,9 +60,11 @@ export class InfoPage implements OnInit {
       Validators.pattern('^[0-9]*$'),
       Validators.minLength(9),
     ]),
-    pets_number: new FormControl(this.user().pets_number, [
-      Validators.required,
-    ]),
+    pets: new FormControl([], [Validators.required]),
+    pets_number: new FormControl(
+      this.user().pets_number ? this.user().pets_number : null,
+      [Validators.required]
+    ),
     pet_foster: new FormControl(
       this.user().pet_foster ? this.user().pet_foster : false,
       [Validators.required]
@@ -73,11 +77,11 @@ export class InfoPage implements OnInit {
       this.user().has_vet ? this.user().has_vet : false,
       [Validators.required]
     ),
-    address: new FormControl(this.user().address),
-    comuna: new FormControl(this.user().comuna),
-    region: new FormControl(this.user().region),
-    creation_date: new FormControl(new Date().toISOString()),
-    last_login: new FormControl(new Date().toISOString()),
+    address: new FormControl(this.user().address ? this.user().address : ''),
+    comuna: new FormControl(this.user().comuna ? this.user().comuna : ''),
+    region: new FormControl(this.user().region ? this.user().region : ''),
+    creation_date: new FormControl(new Date().toLocaleString()),
+    last_login: new FormControl(new Date().toLocaleString()),
   });
 
   async ionViewWillEnter() {
@@ -96,12 +100,12 @@ export class InfoPage implements OnInit {
   async loadData() {
     await this.getGenders();
     await this.getRegions();
-    console.log(this.regions);
-    if (this.regions) {
+    if (this.regions && this.user().region) {
       console.log(this.regions);
       this.filteredComunas = this.comunas.find(
         (comunas) => comunas[0] == this.user().region
       );
+      console.log(this.filteredComunas);
       this.filteredComunas = this.filteredComunas[1].map((comuna, index) => [
         index.toString(),
         comuna,
@@ -153,6 +157,7 @@ export class InfoPage implements OnInit {
       comuna,
     ]);
     this.userForm.controls.region.setValue(event);
+    console.log(event);
   }
 
   onComunaChange(event) {
@@ -170,24 +175,27 @@ export class InfoPage implements OnInit {
 
   async onSubmit() {
     let uid = this.userForm.value.uid;
-    console.log('si');
     await this.setUsuario(uid);
   }
 
   async setUsuario(uid: string) {
     let path = `users/${uid}`;
-    const loading = await this.utilSvc.loading('Guardando');
+    const loading = await this.utilSvc.presentLoading({
+      message: 'Guardando',
+      keyboardClose: true,
+      spinner: 'bubbles',
+    });
     await loading.present();
     this.firebaseSvc
       .setDocument(path, this.userForm.value as User)
       .then(() => {
+        this.utilSvc.presentToast({
+          message: 'Información guardada con exito',
+          duration: 1500,
+          position: 'middle',
+          color: 'primary',
+        });
         this.utilSvc.saveInLocalStorage('user', this.userForm.value);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(async () => {
-        loading.dismiss();
         if (this.userForm.controls.pets_number.value > 0) {
           this.utilSvc.routerLink('main/pet/add-pet');
         } else if (this.userForm.controls.has_store.value) {
@@ -195,6 +203,18 @@ export class InfoPage implements OnInit {
         } else {
           this.utilSvc.routerLink('/tabs');
         }
+      })
+      .catch((error) => {
+        console.log(error);
+        this.utilSvc.presentToast({
+          message: 'Error al guardar Información',
+          duration: 1500,
+          position: 'middle',
+          color: 'danger',
+        });
+      })
+      .finally(async () => {
+        loading.dismiss();
       });
   }
 }

@@ -35,17 +35,15 @@ export class AuthPage implements OnInit {
     password: new FormControl('', [Validators.required]),
   });
 
-  
-
-
-  
-
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   async onSubmit() {
     if (this.authForm.valid) {
-      const loading = await this.utilSvc.loading('Iniciando sesión');
+      const loading = await this.utilSvc.presentLoading({
+        message: 'Iniciando sesión',
+        keyboardClose: true,
+        spinner: 'bubbles',
+      });
       await loading.present();
       this.firebaseSvc
         .signIn(this.authForm.value as User)
@@ -56,29 +54,25 @@ export class AuthPage implements OnInit {
           console.log(error);
           if (error.code == 'auth/wrong-password') {
             console.log(error.code);
-            this.authForm.get('password').setErrors({'wrong-password': true});
+            this.authForm.get('password').setErrors({ 'wrong-password': true });
             this.authForm.get('password').markAsDirty();
-          }
-          else if (error.code == 'auth/user-not-found') {
+          } else if (error.code == 'auth/user-not-found') {
             console.log(error.code);
-            this.authForm.get('email').setErrors({'wrong-email': true});
+            this.authForm.get('email').setErrors({ 'wrong-email': true });
             this.authForm.get('email').markAsDirty();
-          }
-          else if (error.code == 'auth/too-many-requests') {
+          } else if (error.code == 'auth/too-many-requests') {
             console.log(error.code);
             this.utilSvc.presentToast({
               message:
                 'Demasiados intentos fallidos, vuelve a intentarlo más tarde o restablece la contraseña',
-              duration: 3000,
+              duration: 1500,
               position: 'middle',
             });
-          }
-          else {
+          } else {
             console.log(error.code);
             this.utilSvc.presentToast({
-              message:
-                'Ocurrió un problema, vuelve a intentarlo más tarde',
-              duration: 3000,
+              message: 'Ocurrió un problema, vuelve a intentarlo más tarde',
+              duration: 1500,
               position: 'middle',
             });
           }
@@ -95,12 +89,10 @@ export class AuthPage implements OnInit {
       .getDocument(path)
       .then(async (user: User) => {
         await this.utilSvc.saveInLocalStorage('user', user);
-        this.utilSvc.routerLink('/tabs');
+        this.utilSvc.routerLink('tabs');
       })
       .catch((error) => {
         console.log(error);
       });
   }
-
-  
 }

@@ -34,6 +34,18 @@ const routes: Routes = [
     path: 'pet',
     loadChildren: () => import('./pet/pet.module').then( m => m.PetPageModule)
   },
+  {
+    path: 'store',
+    loadChildren: () => import('./store/store.module').then( m => m.StorePageModule)
+  },
+  {
+    path: 'vet',
+    loadChildren: () => import('./vet/vet.module').then( m => m.VetPageModule)
+  },
+  {
+    path: 'lost',
+    loadChildren: () => import('./lost/lost.module').then( m => m.LostPageModule)
+  },
 ];
 
 @NgModule({

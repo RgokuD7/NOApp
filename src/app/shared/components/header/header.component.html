@@ -1,3 +1,15 @@
-<p>
-  header works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button *ngIf="backButtom" text="" [defaultHref]="backButtom"></ion-back-button>
+      <ion-button (click)="dismissModal()" *ngIf="isModal" text="">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </ion-button>
+    </ion-buttons>
+    <ion-title color="primary">
+      <strong>
+        {{title}}
+      </strong>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>

@@ -19,8 +19,6 @@ import { UtilsService } from 'src/app/services/utils.service';
   styleUrls: ['./sign-up.page.scss'],
 })
 export class SignUpPage implements OnInit {
-  form: FormGroup;
-
   constructor() {}
 
   firebaseSvc = inject(FirebaseService);
@@ -28,29 +26,13 @@ export class SignUpPage implements OnInit {
   liadingCtrl = inject(LoadingController);
   router = inject(Router);
 
-  section: number = 1;
-  birthday: string;
-  genders: any[] = [];
-  comunas: any[] = [];
-  regions: any[] = [];
   filteredComunas: any[] = [[null, 'Primero selecciona Región']];
 
-  ionViewWillEnter() {
-    this.getGenders();
-    this.getRegions();
-  }
+  ionViewWillEnter() {}
 
   userForm = new FormGroup({
     uid: new FormControl(''),
     names: new FormControl('', [Validators.required]),
-    profile_img: new FormControl(''),
-    birthday: new FormControl('', [Validators.required]),
-    age: new FormControl(0, [Validators.required, Validators.min(7)]),
-    gender: new FormControl(''),
-    phone: new FormControl(null, [
-      Validators.pattern('^[0-9]*$'),
-      Validators.minLength(9),
-    ]),
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl('', [
       Validators.required,
@@ -63,59 +45,23 @@ export class SignUpPage implements OnInit {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
       ), // Al menos una minúscula, una mayúscula, un número y un carácter especial
     ]),
-    pets_number: new FormControl(null, [Validators.required]),
-    pet_foster: new FormControl(false, [Validators.required]),
-    has_store: new FormControl(false, [Validators.required]),
-    has_vet: new FormControl(false, [Validators.required]),
-    address: new FormControl(''),
-    comuna: new FormControl(''),
-    region: new FormControl(''),
-    lat: new FormControl(0),
-    lng: new FormControl(0),
-    notifications: new FormControl(false),
-    creation_date: new FormControl(''),
-    last_login: new FormControl(''),
-    donations: new FormControl(0),
+    creation_date: new FormControl(new Date().toISOString()),
+    last_login: new FormControl(new Date().toISOString()),
   });
 
   ngOnInit() {
     console.log('ngOnInit');
   }
 
-  onBirthDayChange(event) {
-    this.userForm.controls.birthday.setValue(event.datetime);
-    this.userForm.controls.age.setValue(event.age);
-  }
-
-  onGenderChange(event) {
-    console.log(event);
-    this.userForm.controls.gender.setValue(event);
-  }
-
-  onRegionChange(event){
-    this.filteredComunas = this.comunas.find(comunas => comunas[0] == event);
-    this.filteredComunas = this.filteredComunas[1].map((comuna, index) => [index.toString(), comuna]);
-    this.userForm.controls.region.setValue(event);
-  }
-
-  onComunaChange(event){
-    this.userForm.controls.comuna.setValue(event);
-  }
-
-  async signEmail() {
-    if (
-      this.userForm.controls.email.valid ||
-      this.userForm.controls.password.valid
-    ) {
-      const loading = await this.utilSvc.loading('Registrando correo');
-      await loading.present();
+  async onSubmit() {
+    if (this.userForm.valid) {
       this.firebaseSvc
         .signUp(this.userForm.value as User)
         .then(async (res) => {
           await this.firebaseSvc.updateUser(this.userForm.value.username);
           let uid = res.user.uid;
           this.userForm.controls.uid.setValue(uid);
-          this.section++;
+          this.setUsuario(uid);
         })
         .catch(async (error) => {
           console.log(error);
@@ -136,68 +82,48 @@ export class SignUpPage implements OnInit {
                 },
                 {
                   text: 'No',
-                  role: 'cancel'
+                  role: 'cancel',
                 },
               ],
             });
           }
         })
-        .finally(async () => {
-          await loading.dismiss();
-        });
+        .finally(async () => {});
     }
-  }
-  signPersonalInfo() {
-    if (
-      this.userForm.controls.birthday.valid &&
-      this.userForm.controls.age.valid
-    )
-      this.section++;
-  }
-  async onSubmit() {
-    let uid = this.userForm.value.uid;
-    await this.setUsuario(uid);
   }
 
   async setUsuario(uid: string) {
+    const loading = await this.utilSvc.presentLoading({
+      message: 'Registrando',
+      keyboardClose: true,
+      spinner: 'bubbles',
+    });
+    await loading.present();
     let path = `users/${uid}`;
     this.userForm.value.password = '';
-    const loading = await this.utilSvc.loading('Crenado usuario');
-    await loading.present();
     this.firebaseSvc
       .setDocument(path, this.userForm.value as User)
       .then(() => {
+        this.utilSvc.presentToast({
+          message: 'Información guardada correctamente',
+          duration: 1500,
+          position: 'middle',
+          color: 'primary',
+        });
         this.utilSvc.saveInLocalStorage('user', this.userForm.value);
+        this.utilSvc.routerLink('/main/user-profile/info');
       })
       .catch((error) => {
         console.log(error);
+        this.utilSvc.presentToast({
+          message: 'Error al guardar iformación',
+          duration: 1500,
+          position: 'middle',
+          color: 'danger',
+        });
       })
       .finally(async () => {
         loading.dismiss();
-        if(this.userForm.controls.pets_number.value > 0) this.utilSvc.routerLink('main/pet/add-pet');
-        else if(this.userForm.controls.has_store.value) this.utilSvc.routerLink('main/pet/add-pet');
-        /* this.utilSvc.routerLink('/tabs'); */
       });
   }
-
-  getGenders() {
-    let sub = this.firebaseSvc.getCollectionData('genders/').subscribe({
-      next: (data: any) => {
-        this.genders = data.map((item) => [item.id, item.gender]);
-        sub.unsubscribe;
-      },
-    });
-  }
-
-  getRegions() {
-    let sub = this.firebaseSvc.getCollectionData('regions/').subscribe({
-      next: (data: any) => {
-        this.regions = data.map((item) => [item.id, item.region]);
-        this.comunas = data.map((item) => [item.id, item.comunas]);
-        sub.unsubscribe;
-      },
-    });
-  }
-
-  
 }

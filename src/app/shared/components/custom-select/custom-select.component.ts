@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 
 @Component({
   selector: 'app-custom-select',
@@ -9,6 +16,8 @@ export class CustomSelectComponent implements OnInit {
   constructor() {}
 
   @Input() label!: string;
+  @Input() currentValue!: any;
+  @Input() valueLabel!: any;
   @Input() openWith!: string;
   @Input() options!: any[];
   @Input() icon!: string;
@@ -17,22 +26,48 @@ export class CustomSelectComponent implements OnInit {
   @Input() searchLabel!: string;
   @Output() optionChange = new EventEmitter<any>();
 
-  currentValue: any;
-  valueLabel: any;
   filteredOptions: any[];
   class: string = 'normal-item';
   iconColor: string = 'primary';
   faColor: string = 'var(--ion-color-primary)';
 
-  ngOnInit() {}
-
-  ngOnChanges() {
-    if (this.options) {
-      this.filteredOptions = [...this.options];
-    }
+  ngOnInit() {
+    console.log(this.options);
   }
 
-  onPickerChange(event) {
+  ngOnChanges(changes: SimpleChanges) {
+  let shouldUpdateValueLabel = false;
+
+  // Verifica si `options` ha cambiado
+  if (changes['options'] && changes['options'].currentValue) {
+    this.filteredOptions = [...changes['options'].currentValue];
+    console.log('ngOnChanges - options:', this.options);
+    shouldUpdateValueLabel = true;
+  }
+
+  // Verifica si `currentValue` ha cambiado
+  if (changes['currentValue'] && changes['currentValue'].currentValue) {
+    console.log(this.currentValue);
+    shouldUpdateValueLabel = true;
+  }
+
+  // Realiza la actualización de `valueLabel` solo si ambos `options` y `currentValue` están definidos
+  if (shouldUpdateValueLabel && this.options && this.options.length > 0) {
+    const selectedOption = this.options.find(
+      (option) => option[0] === this.currentValue
+    );
+
+    // Verifica que se encontró una opción válida
+    if (selectedOption) {
+      this.valueLabel = selectedOption[1];
+    } else {
+      console.warn('No se encontró la opción seleccionada en options.');
+    }
+  }
+}
+
+
+  onPickerChange(event?) {
     console.log(this.filteredOptions);
     this.currentValue = event.detail.value;
     this.valueLabel = this.options.find(

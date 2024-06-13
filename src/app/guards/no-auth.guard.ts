@@ -19,10 +19,12 @@ export class noAuthGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       return new Promise((resolve) => {
+        let user = this.utilSvc.getFromLocalStorage('user');
         this.firebaseSvc.getAuth().onAuthStateChanged((auth) => {
           if(!auth) resolve(true);
           else{
-            this.utilSvc.routerLink('/tabs');
+            if (user.birthday)  this.utilSvc.routerLink('/main/pet'); /* this.utilSvc.routerLink('/tabs'); */
+            else this.utilSvc.routerLink('/main/user-profile/info');
             resolve(false);
           }
         });

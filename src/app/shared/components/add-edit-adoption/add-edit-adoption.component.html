@@ -1,0 +1,48 @@
+<app-header
+  [title]="adoption ? 'Editar publicación' : 'Crear publicación'"
+  [isModal]="true"
+></app-header>
+<ion-content>
+  <form [formGroup]="adoptionForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="!adoptionForm.controls.img.value" class="no-img" (click)="takeImage()">
+      <i class="fa-regular fa-image"></i>
+      <h3>Presiona sobre el icono de imagen para agregar una imagen</h3>
+    </div>
+    <div *ngIf="adoptionForm.controls.img.value" class="adoption-img">
+      <ion-img [src]="adoptionForm.controls.img.value"></ion-img>
+      <h3>Presiona sobre la imagen para cambiarla</h3>
+    </div>
+    <app-custom-input
+      icon="text-outline"
+      type="text"
+      label="Titulo publicación"
+      [control]="adoptionForm.controls.title"
+    ></app-custom-input>
+    <app-custom-text-area
+      faIcon="fa-solid fa-syringe"
+      type="text"
+      label="Descripción"
+      [control]="adoptionForm.controls.description"
+    ></app-custom-text-area>
+    <app-custom-multiple-select
+    label="Mascotas"
+    message="Selecciona las mascotas que das en adopción"
+    [options]="pets"
+    openWith="pets">
+    </app-custom-multiple-select>
+    <app-custom-text-area
+      faIcon="fa-solid fa-syringe"
+      type="text"
+      label="Necesidades"
+      [control]="adoptionForm.controls.needs"
+    ></app-custom-text-area>
+
+    <app-custom-input
+      icon="location-outline"
+      type="text"
+      label="Dirección"
+      [control]="adoptionForm.controls.title"
+    ></app-custom-input>
+    <ion-button type="submit" expand="block">Publicar </ion-button>
+  </form>
+</ion-content>
