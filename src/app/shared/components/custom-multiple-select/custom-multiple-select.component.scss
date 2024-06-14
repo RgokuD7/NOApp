@@ -1,31 +1,14 @@
-ion-list {
+.page {
+  border: 2px solid var(--ion-color-primary);
   border-radius: 10px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
   margin-bottom: 10px;
+  padding: 5px;
+  text-align: left;
 }
-.normal-input {
-  border: 2px solid var(--ion-color-primary);
-  ion-input {
-    --color: var(--ion-color-primary);
-  }
-}
-.error-input {
-  border: 2px solid var(--ion-color-danger);
-  ion-input {
-    --color: var(--ion-color-danger);
-  }
-}
-
-.errors {
-  div {
-    color: var(--ion-color-danger);
-  }
-  margin-bottom: 10px;
-}
-
 .content {
   width: 100%;
   height: max-content;
@@ -35,4 +18,30 @@ ion-list {
   justify-content: center;
   color: var(--ion-color-primary);
   padding: 10px 10px 30px;
+  ion-item {
+    width: 100%;
+  }
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  i {
+    font-size: x-large;
+  }
+}
+
+.added {
+  color: var(--ion-color-primary);
+  i {
+    color: var(--ion-color-danger);
+  }
+}
+.no-added {
+  color: var(--ion-color-primary);
+  i {
+    color: var(--ion-color-primary);
+  }
 }

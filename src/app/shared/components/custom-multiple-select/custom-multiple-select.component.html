@@ -1,29 +1,62 @@
 <div class="page">
-  <h3 *ngIf="label">{{ label }}</h3>
+  <h4 *ngIf="label">{{ label }}</h4>
   <p *ngIf="message">{{ message }}</p>
-  <ion-list>
-    <ion-item>
-      <ion-button [id]="openWith" expand="block">Agregar</ion-button>
+  <ng-container *ngFor="let opt of filteredOptions">
+    <ion-item *ngIf="isInCurrentValues(opt[0])">
+      <div class="options added">
+        <ion-label>{{ opt[1] }}</ion-label>
+        <i
+          slot="end"
+          class="fa-solid fa-circle-xmark"
+          (click)="remove(opt[0])"
+        ></i>
+      </div>
     </ion-item>
-  </ion-list>
+  </ng-container>
+  <ion-item lines="none">
+    <ion-button (click)="openOptionsModal()" expand="block"
+      >Agregar mascota</ion-button
+    >
+  </ion-item>
 </div>
 <ion-modal
   #modal
-  [trigger]="openWith"
+  [isOpen]="isModalOpen"
   [breakpoints]="[0, 1]"
   initialBreakpoint="1"
+  (willDismiss)="onModalWillDismiss()"
   class="modal"
 >
   <ng-template>
     <div class="content">
-      <ion-list>
-        <ion-item *ngFor="let opt of options">
-          <div *ngIf="!isInCurrentValues(opt[0])">
-            <i slot="start" class="fa-solid fa-circle-plus"></i>
+      <ion-searchbar
+        *ngIf="search"
+        [placeholder]="searchLabel"
+        (ionInput)="onSearchChange($event)"
+      ></ion-searchbar>
+      <ng-container *ngFor="let opt of filteredOptions">
+        <ion-item *ngIf="!isInCurrentValues(opt[0])">
+          <div class="options no-added">
             <ion-label>{{ opt[1] }}</ion-label>
+            <i
+              slot="end"
+              class="fa-solid fa-circle-plus"
+              (click)="add(opt[0])"
+            ></i>
           </div>
         </ion-item>
-      </ion-list>
+      </ng-container>
+      <ion-item
+        *ngIf="filteredOptions.length == currentValues.length"
+        lines="none"
+      >
+        <ion-label>No hay más mascotas para agregar</ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-button (click)="openAddPetModal()" expand="block">
+          Agregar nueva mascota
+        </ion-button>
+      </ion-item>
     </div>
   </ng-template>
 </ion-modal>

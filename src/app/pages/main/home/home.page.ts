@@ -9,6 +9,8 @@ import { Observable } from 'rxjs';
 import { NfcTag } from '@capawesome-team/capacitor-nfc';
 import { ReadNfcComponent } from 'src/app/shared/components/read-nfc/read-nfc.component';
 import { AddEditAdoptionComponent } from 'src/app/shared/components/add-edit-adoption/add-edit-adoption.component';
+import { Adoption } from 'src/app/models/adoption.model';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-home',
@@ -16,10 +18,6 @@ import { AddEditAdoptionComponent } from 'src/app/shared/components/add-edit-ado
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-  public scannedTag$: Observable<NfcTag>;
-
-  private showLastScannedTag = false;
-
   constructor() {}
 
   firebaseSvc = inject(FirebaseService);
@@ -29,70 +27,134 @@ export class HomePage implements OnInit {
 
   @ViewChild(IonModal) modal: IonModal;
 
-  message =
-    'This modal example uses triggers to automatically open a modal when the button is clicked.';
-  name: string;
   tag: string = '';
-
-  cancel() {
-    this.modal.dismiss(null, 'cancel');
-  }
+  adoptions: Adoption[];
 
   async ngOnInit() {}
 
-  async openNfcModal() {
-    const modal = await this.utilSvc.presentModal({
-      component: ReadNfcComponent,
-      presentingElement: document.querySelector('.page'),
+
+  async ionViewWillEnter() {
+    await this.loadData();
+  }
+
+  async loadData() {
+    await this.getAdoptions();
+  }
+
+  user(): User {
+    return this.utilSvc.getFromLocalStorage('user');
+  }
+
+  onPress(adopt: Adoption) {
+    const userUid = this.user().uid;
+    const isOwner = adopt.uid === userUid;
+  
+    const buttons = [
+      {
+        text: 'Cancelar',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancelar clicked');
+        },
+      },
+    ];
+  
+    if (isOwner) {
+      buttons.unshift(
+        {
+          text: 'Editar',
+          icon: 'create',
+          role: 'edit',
+          handler: () => {
+            console.log('Editar clicked');
+            this.openAddAoptionModal(adopt);
+          },
+        },
+        {
+          text: 'Eliminar',
+          icon: 'trash',
+          role: 'destructive',
+          handler: () => {
+            console.log('Eliminar clicked');
+            this.deletAdoption(adopt);
+          },
+        }
+      );
+    } else {
+      buttons.unshift(
+        {
+          text: 'Reportar',
+          role: 'report',
+          icon: 'warning',
+          handler: () => {
+            console.log('Reportar clicked');
+            // Implementa la lógica para reportar la adopción
+          },
+        }
+      );
+    }
+  
+    this.utilSvc.presentActionSheet({
+      buttons,
     });
+  }
 
-    console.log(modal);
-    if (modal.error) {
-      this.utilSvc.presentAlert({
-        header: 'Lo sentimos',
-        message: modal.error,
-        keyboardClose: true,
-        buttons: [
-          {
-            text: 'Escanear QR',
-            role: '',
-            handler: () => {
-              /* this.utilSvc.routerLink('auth/forgot-password'); */
-            },
-          },
-          {
-            text: 'Cancelar',
-            role: 'cancel',
-          },
-        ],
+  async deletAdoption(adopt: Adoption) {
+    const loading = await this.utilSvc.presentLoading({
+      message: 'Eliminando',
+      keyboardClose: true,
+      spinner: 'bubbles',
+    });
+    await loading.present();
+
+    if (adopt.img) {
+      let imagePath = await this.firebaseSvc.getFilePath(adopt.img);
+      await this.firebaseSvc.deleteFile(imagePath);
+    }
+
+    var user = this.user();
+
+    let path = `adoptions/${adopt.id}`;
+    console.log(path);
+    this.firebaseSvc
+      .deleteDocument(path)
+      .then(() => {
+        this.utilSvc.presentToast({
+          message: 'Mascota Eliminada',
+          duration: 1500,
+          position: 'middle',
+          color: 'primary',
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.utilSvc.presentToast({
+          message: 'Error al eliminar mascota',
+          duration: 1500,
+          position: 'middle',
+          color: 'danger',
+        });
+      })
+      .finally(() => {
+        loading.dismiss();
+        this.loadData();
       });
-    } else if (modal.tag) {
-      this.tag = modal.tag;
-    }
   }
-
-  confirm() {
-    this.modal.dismiss(this.name, 'confirm');
-  }
-
-  onWillDismiss(event: Event) {
-    const ev = event as CustomEvent<OverlayEventDetail<string>>;
-    if (ev.detail.role === 'confirm') {
-      this.message = `Hello, ${ev.detail.data}!`;
-    }
-  }
+  
 
   onSubmit() {}
-  async addClick() {
+  async openAddAoptionModal(adopt?: Adoption) {
     const modal = await this.utilSvc.presentModal({
       component: AddEditAdoptionComponent,
+      componentProps: {adoption: adopt},
       presentingElement: document.querySelector('.page'),
       canDismiss: this.modalCanDismiss,
     });
 
     console.log(modal);
 
-    //if (modal && modal.valid) this.loadData();
+    if (modal && modal.valid) this.loadData();
   }
 
   modalCanDismiss = async (data?: any, role?: string) => {
@@ -120,5 +182,16 @@ export class HomePage implements OnInit {
     console.log(actRole);
     return actRole === 'confirm';
   };
-
+  async getAdoptions() {
+    return new Promise<void>((resolve, reject) => {
+      let sub = this.firebaseSvc.getCollectionData('adoptions/').subscribe({
+        next: (data: any) => {
+          this.adoptions = data;
+          sub.unsubscribe();
+          resolve();
+        },
+        error: (err) => reject(err),
+      });
+    });
+  }
 }

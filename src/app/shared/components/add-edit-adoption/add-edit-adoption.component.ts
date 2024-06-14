@@ -20,7 +20,6 @@ export class AddEditAdoptionComponent implements OnInit {
 
   @Input() adoption!: Adoption;
 
-
   utilSvc = inject(UtilsService);
   firebaseSvc = inject(FirebaseService);
   route = inject(ActivatedRoute);
@@ -39,16 +38,16 @@ export class AddEditAdoptionComponent implements OnInit {
     id: new FormControl(''),
     uid: new FormControl(this.user().uid),
     title: new FormControl('', [Validators.required]),
-    pets_number: new FormControl(null, [Validators.required]),
+    pets_number: new FormControl(null),
     pets: new FormControl([], [Validators.required]),
-    description: new FormControl('', [Validators.required]),
-    needs: new FormControl('', [Validators.required]),
-    img: new FormControl('', [Validators.required]),
-    lotion: new FormControl('', [Validators.required]),
-    lat: new FormControl(null, [Validators.required]),
-    lng: new FormControl(null, [Validators.required]),
-    report_state: new FormControl('', [Validators.required]),
-    creation_date: new FormControl('', [Validators.required]),
+    description: new FormControl(''),
+    needs: new FormControl(''),
+    img: new FormControl(''),
+    location: new FormControl(''),
+    lat: new FormControl(null),
+    lng: new FormControl(null),
+    report_state: new FormControl(''),
+    creation_date: new FormControl(new Date().toLocaleString()),
   });
 
   async ionViewWillEnter() {
@@ -95,6 +94,10 @@ export class AddEditAdoptionComponent implements OnInit {
     this.section++;
   }
 
+  petsChange(event) {
+    this.adoptionForm.controls.pets.setValue(event);
+  }
+
   async onSubmit() {
     if (this.adoptionForm.valid) {
       const loading = await this.utilSvc.presentLoading({
@@ -104,21 +107,20 @@ export class AddEditAdoptionComponent implements OnInit {
       });
       await loading.present();
 
-      var user = this.user();
-      console.log(user);
-
       delete this.adoptionForm.value.id;
 
       if (!this.adoption) {
         if (this.adoptionForm.value.img) {
           let dataUrl = this.adoptionForm.value.img;
-          let imagePath = `${this.adoptionForm.value.uid}/${Date.now()}`;
+          let imagePath = `adoptions/${
+            this.adoptionForm.value.uid
+          }/${Date.now()}`;
           let imageUrl = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
           this.adoptionForm.controls.img.setValue(imageUrl);
         }
 
         this.firebaseSvc
-          .addDocument('pets', this.adoptionForm.value as Adoption)
+          .addDocument('adoptions', this.adoptionForm.value as Adoption)
           .then(async (adoption) => {
             this.adoptionId = adoption.id;
             this.utilSvc.presentToast({
@@ -142,13 +144,20 @@ export class AddEditAdoptionComponent implements OnInit {
             loading.dismiss();
           });
       } else {
-        if (this.adoptionForm.value.img !== this.adoption.img) {
+        if (this.adoptionForm.value.img && !this.adoption.img) {
+          let dataUrl = this.adoptionForm.value.img;
+          let imagePath = `adoptions/${
+            this.adoptionForm.value.uid
+          }/${Date.now()}`;
+          let imageUrl = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
+          this.adoptionForm.controls.img.setValue(imageUrl);
+        } else if (this.adoptionForm.value.img !== this.adoption.img) {
           let dataUrl = this.adoptionForm.value.img;
           let imagePath = await this.firebaseSvc.getFilePath(this.adoption.img);
           let imageUrl = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
           this.adoptionForm.controls.img.setValue(imageUrl);
         }
-        let path = `pets/${this.adoption.id}`;
+        let path = `adoptions/${this.adoption.id}`;
         console.log(path);
         this.firebaseSvc
           .updateDocument(path, this.adoptionForm.value as Adoption)

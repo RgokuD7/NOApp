@@ -168,7 +168,7 @@ export class AddEditPetComponent implements OnInit {
       if (!this.pet) {
         if (this.petForm.value.photo !== '/assets/icon/pet-avatar.png') {
           let dataUrl = this.petForm.value.photo;
-          let imagePath = `${this.petForm.value.uid}/${Date.now()}`;
+          let imagePath = `pets/${this.petForm.value.uid}/${Date.now()}`;
           let imageUrl = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
           this.petForm.controls.photo.setValue(imageUrl);
         }
@@ -192,7 +192,7 @@ export class AddEditPetComponent implements OnInit {
               position: 'middle',
               color: 'primary',
             });
-            this.utilSvc.dismissModal({ valid: true });
+            this.utilSvc.dismissModal({ valid: true, petId: pet.id, petNames: this.petForm.controls.names.value });
           })
           .catch((err) => {
             console.log(err);

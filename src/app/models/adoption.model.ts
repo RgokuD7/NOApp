@@ -7,7 +7,7 @@ export interface Adoption{
     description: string,
     needs: string,
     img: string,
-    lotion: string,
+    location: string,
     lat: number,
     lng: number,
     report_state: string,

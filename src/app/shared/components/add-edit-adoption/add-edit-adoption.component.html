@@ -4,7 +4,11 @@
 ></app-header>
 <ion-content>
   <form [formGroup]="adoptionForm" (ngSubmit)="onSubmit()">
-    <div *ngIf="!adoptionForm.controls.img.value" class="no-img" (click)="takeImage()">
+    <div
+      *ngIf="!adoptionForm.controls.img.value"
+      class="no-img"
+      (click)="takeImage()"
+    >
       <i class="fa-regular fa-image"></i>
       <h3>Presiona sobre el icono de imagen para agregar una imagen</h3>
     </div>
@@ -19,19 +23,22 @@
       [control]="adoptionForm.controls.title"
     ></app-custom-input>
     <app-custom-text-area
-      faIcon="fa-solid fa-syringe"
+      faIcon="fa-solid fa-align-justify"
       type="text"
       label="Descripción"
       [control]="adoptionForm.controls.description"
     ></app-custom-text-area>
     <app-custom-multiple-select
-    label="Mascotas"
-    message="Selecciona las mascotas que das en adopción"
-    [options]="pets"
-    openWith="pets">
+      label="Mascotas"
+      message="Selecciona las mascotas que das en adopción"
+      [options]="pets"
+      [currentValues]="adoptionForm.controls.pets.value"
+      openWith="pets"
+      (optionChange)="petsChange($event)"
+    >
     </app-custom-multiple-select>
     <app-custom-text-area
-      faIcon="fa-solid fa-syringe"
+      faIcon="fa-solid fa-notes-medical"
       type="text"
       label="Necesidades"
       [control]="adoptionForm.controls.needs"
@@ -41,8 +48,10 @@
       icon="location-outline"
       type="text"
       label="Dirección"
-      [control]="adoptionForm.controls.title"
+      [control]="adoptionForm.controls.location"
     ></app-custom-input>
-    <ion-button type="submit" expand="block">Publicar </ion-button>
+    <ion-button type="submit" expand="block" [disabled]="!adoptionForm.valid"
+      >Publicar
+    </ion-button>
   </form>
 </ion-content>

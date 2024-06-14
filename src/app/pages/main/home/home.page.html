@@ -1,20 +1,20 @@
 <ion-content class="page" [fullscreen]="true">
-  <app-header
-  title="Animales para adoptar"
-></app-header>
-  <ion-card>
-    <ion-buttons>
-      <ion-button (click)="openNfcModal()">
-        <i class="fa-brands fa-nfc-symbol"></i>
-        <ion-label>Scan</ion-label>
-      </ion-button>
-      <ion-button>
-        <ion-label>{{tag}}</ion-label>
-      </ion-button>
-    </ion-buttons>
+  <app-header title="Animales para adoptar"></app-header>
+  <ion-card *ngFor="let adopt of adoptions" (press)="onPress(adopt)">
+    <ion-img
+      *ngIf="adopt.img"
+      [src]="adopt.img"
+    ></ion-img>
+    <ion-card-header>
+      <ion-card-title>{{adopt.title}}</ion-card-title>
+      <ion-card-subtitle>{{adopt.location}}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      {{adopt.description}}
+    </ion-card-content>
   </ion-card>
   <ion-fab horizontal="end" vertical="bottom" slot="fixed">
-    <ion-fab-button (click)="addClick()">
+    <ion-fab-button (click)="openAddAoptionModal()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
