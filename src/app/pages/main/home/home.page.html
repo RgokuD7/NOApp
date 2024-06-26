@@ -1,20 +1,23 @@
 <ion-content class="page" [fullscreen]="true">
-  <app-header title="Animales para adoptar"></app-header>
-  <ion-card *ngFor="let adopt of adoptions" (press)="onPress(adopt)">
+  <app-header title="Publicaciones"></app-header>
+  <ion-button (click)="openNfcModal()" expand="block">
+    Escanear tag de mascota perdida
+  </ion-button>
+  <ion-card *ngFor="let publi of allPublications" (press)="onPress(publi)">
     <ion-img
-      *ngIf="adopt.img"
-      [src]="adopt.img"
+      *ngIf="publi.img"
+      [src]="publi.img"
     ></ion-img>
     <ion-card-header>
-      <ion-card-title>{{adopt.title}}</ion-card-title>
-      <ion-card-subtitle>{{adopt.location}}</ion-card-subtitle>
+      <ion-card-title>{{publi.title}}</ion-card-title>
+      <ion-card-subtitle>{{publi.location}}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      {{adopt.description}}
+      {{publi.description}}
     </ion-card-content>
   </ion-card>
   <ion-fab horizontal="end" vertical="bottom" slot="fixed">
-    <ion-fab-button (click)="openAddAoptionModal()">
+    <ion-fab-button (click)="createPublication()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

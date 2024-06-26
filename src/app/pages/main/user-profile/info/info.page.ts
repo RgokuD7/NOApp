@@ -80,8 +80,8 @@ export class InfoPage implements OnInit {
     address: new FormControl(this.user().address ? this.user().address : ''),
     comuna: new FormControl(this.user().comuna ? this.user().comuna : ''),
     region: new FormControl(this.user().region ? this.user().region : ''),
-    creation_date: new FormControl(new Date().toLocaleString()),
-    last_login: new FormControl(new Date().toLocaleString()),
+    creation_date: new FormControl(new Date().toISOString()),
+    last_login: new FormControl(new Date().toISOString()),
   });
 
   async ionViewWillEnter() {

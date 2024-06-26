@@ -124,10 +124,10 @@ export class NfcService {
     if (isNativePlatform) {
       message = 'Tú dispositivo no tiene NFC';
     }
-    /* this.utilSvc.dismissModal({ error: message }); */
-    setTimeout(() => {
+    this.utilSvc.dismissModal({ error: message });
+    /* setTimeout(() => {
       this.utilSvc.dismissModal({ tag: '33:35:CE:F9' });
-    }, 1000);
+    }, 1000); */
     return new Error(message);
   }
 

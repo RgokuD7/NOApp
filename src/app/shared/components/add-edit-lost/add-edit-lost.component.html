@@ -1,0 +1,56 @@
+<app-header
+  [title]="lost ? 'Editar publicación' : 'Crear publicación'"
+  [isModal]="true"
+></app-header>
+<ion-content>
+  <form [formGroup]="lostForm" (ngSubmit)="onSubmit()">
+    <div
+      *ngIf="!lostForm.controls.img.value"
+      class="no-img"
+      (click)="takeImage()"
+    >
+      <i class="fa-regular fa-image"></i>
+      <h3>Presiona sobre el icono de imagen para agregar una imagen</h3>
+    </div>
+    <div *ngIf="lostForm.controls.img.value" class="adoption-img">
+      <ion-img [src]="lostForm.controls.img.value"></ion-img>
+      <h3>Presiona sobre la imagen para cambiarla</h3>
+    </div>
+    <app-custom-input
+      icon="text-outline"
+      type="text"
+      label="Titulo publicación"
+      [control]="lostForm.controls.title"
+    ></app-custom-input>
+    <app-custom-text-area
+      faIcon="fa-solid fa-align-justify"
+      type="text"
+      label="Descripción"
+      [control]="lostForm.controls.description"
+    ></app-custom-text-area>
+    <app-custom-select
+    openWith="pet_gender"
+    label="Mascota perdida"
+    [options]="pets"
+    [currentValue]="lostForm.value.petid"
+    (optionChange)="onPetChange($event)"
+    faIcon="fa-solid fa-paw"
+  ></app-custom-select>
+    <app-custom-text-area
+      faIcon="fa-solid fa-notes-medical"
+      type="text"
+      label="Necesidades"
+      [control]="lostForm.controls.needs"
+    ></app-custom-text-area>
+
+    <app-custom-input
+      icon="location-outline"
+      type="text"
+      label="Dirección"
+      [control]="lostForm.controls.location"
+    ></app-custom-input>
+    <ion-button type="submit" expand="block" [disabled]="!lostForm.valid"
+      >Publicar
+    </ion-button>
+  </form>
+</ion-content>

@@ -14,6 +14,7 @@ import { ReadNfcComponent } from './components/read-nfc/read-nfc.component';
 import { ScannedChipComponent } from './components/scanned-chip/scanned-chip.component';
 import { AddEditAdoptionComponent } from './components/add-edit-adoption/add-edit-adoption.component';
 import { CustomMultipleSelectComponent } from './components/custom-multiple-select/custom-multiple-select.component';
+import { AddEditLostComponent } from './components/add-edit-lost/add-edit-lost.component';
 
 
 const COMPONENTDECLARATIONS = [
@@ -28,7 +29,8 @@ const COMPONENTDECLARATIONS = [
   ReadNfcComponent,
   ScannedChipComponent,
   AddEditAdoptionComponent,
-  CustomMultipleSelectComponent
+  CustomMultipleSelectComponent,
+  AddEditLostComponent
 ];
 
 

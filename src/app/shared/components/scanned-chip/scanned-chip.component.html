@@ -21,6 +21,10 @@
     <h1>Chip escaneado con exito</h1>
     <i class="fa-regular fa-circle-check advice"></i>
   </div>
+  <div *ngIf="show == 'not-found'" class="content invalid">
+    <h1>Este chip no esta registrado en ninguna mascota</h1>
+    <i class="fa-solid fa-circle-xmark advice"></i>
+  </div>
   <div *ngIf="show == 'show'" class="content valid">
     <div class="pet-info">
       <p>Mascota</p>

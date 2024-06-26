@@ -55,7 +55,7 @@ export class AddEditPetComponent implements OnInit {
     medical_info: new FormControl(''),
     vaccine_info: new FormControl(''),
     chip_id: new FormControl(''),
-    registration_date: new FormControl(new Date().toLocaleString()),
+    registration_date: new FormControl(new Date().toISOString()),
   });
 
   async ionViewWillEnter() {

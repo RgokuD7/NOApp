@@ -11,6 +11,9 @@ import { ReadNfcComponent } from 'src/app/shared/components/read-nfc/read-nfc.co
 import { AddEditAdoptionComponent } from 'src/app/shared/components/add-edit-adoption/add-edit-adoption.component';
 import { Adoption } from 'src/app/models/adoption.model';
 import { User } from 'src/app/models/user.model';
+import { AddEditLostComponent } from 'src/app/shared/components/add-edit-lost/add-edit-lost.component';
+import { Lost } from 'src/app/models/lost.model';
+import { ScannedChipComponent } from 'src/app/shared/components/scanned-chip/scanned-chip.component';
 
 @Component({
   selector: 'app-home',
@@ -29,9 +32,10 @@ export class HomePage implements OnInit {
 
   tag: string = '';
   adoptions: Adoption[];
+  lost: Lost[];
+  allPublications: any[];
 
   async ngOnInit() {}
-
 
   async ionViewWillEnter() {
     await this.loadData();
@@ -39,16 +43,18 @@ export class HomePage implements OnInit {
 
   async loadData() {
     await this.getAdoptions();
+    await this.getLost();
+    await this.getAllPublications();
   }
 
   user(): User {
     return this.utilSvc.getFromLocalStorage('user');
   }
 
-  onPress(adopt: Adoption) {
+  onPress(publi: any) {
     const userUid = this.user().uid;
-    const isOwner = adopt.uid === userUid;
-  
+    const isOwner = publi.uid === userUid;
+
     const buttons = [
       {
         text: 'Cancelar',
@@ -59,7 +65,7 @@ export class HomePage implements OnInit {
         },
       },
     ];
-  
+
     if (isOwner) {
       buttons.unshift(
         {
@@ -68,7 +74,11 @@ export class HomePage implements OnInit {
           role: 'edit',
           handler: () => {
             console.log('Editar clicked');
-            this.openAddAoptionModal(adopt);
+            if (publi.type == 'adoption') {
+              this.openAddEditAdoptionModal(publi);
+            } else {
+              this.openAddEditLostModal(publi);
+            }
           },
         },
         {
@@ -77,30 +87,28 @@ export class HomePage implements OnInit {
           role: 'destructive',
           handler: () => {
             console.log('Eliminar clicked');
-            this.deletAdoption(adopt);
+            this.deletePublication(publi);
           },
         }
       );
     } else {
-      buttons.unshift(
-        {
-          text: 'Reportar',
-          role: 'report',
-          icon: 'warning',
-          handler: () => {
-            console.log('Reportar clicked');
-            // Implementa la lógica para reportar la adopción
-          },
-        }
-      );
+      buttons.unshift({
+        text: 'Reportar',
+        role: 'report',
+        icon: 'warning',
+        handler: () => {
+          console.log('Reportar clicked');
+          // Implementa la lógica para reportar la adopción
+        },
+      });
     }
-  
+
     this.utilSvc.presentActionSheet({
       buttons,
     });
   }
 
-  async deletAdoption(adopt: Adoption) {
+  async deletePublication(publi: any) {
     const loading = await this.utilSvc.presentLoading({
       message: 'Eliminando',
       keyboardClose: true,
@@ -108,20 +116,23 @@ export class HomePage implements OnInit {
     });
     await loading.present();
 
-    if (adopt.img) {
-      let imagePath = await this.firebaseSvc.getFilePath(adopt.img);
+    if (publi.img) {
+      let imagePath = await this.firebaseSvc.getFilePath(publi.img);
       await this.firebaseSvc.deleteFile(imagePath);
     }
-
-    var user = this.user();
-
-    let path = `adoptions/${adopt.id}`;
+    let path = '';
+    if (publi.type == 'adoption') {
+      path += 'adoptions/';
+    } else {
+      path += 'lost/';
+    }
+    path += `${publi.id}`;
     console.log(path);
     this.firebaseSvc
       .deleteDocument(path)
       .then(() => {
         this.utilSvc.presentToast({
-          message: 'Mascota Eliminada',
+          message: 'Publicación Eliminada',
           duration: 1500,
           position: 'middle',
           color: 'primary',
@@ -130,7 +141,7 @@ export class HomePage implements OnInit {
       .catch((error) => {
         console.log(error);
         this.utilSvc.presentToast({
-          message: 'Error al eliminar mascota',
+          message: 'Error al eliminar publicación',
           duration: 1500,
           position: 'middle',
           color: 'danger',
@@ -141,13 +152,54 @@ export class HomePage implements OnInit {
         this.loadData();
       });
   }
-  
 
   onSubmit() {}
-  async openAddAoptionModal(adopt?: Adoption) {
+
+  async createPublication() {
+    var actRole = await this.utilSvc.presentActionSheet({
+      header: 'Que deseas publicar',
+      buttons: [
+        {
+          text: 'Adopción',
+          icon: 'paw',
+          role: 'adopt',
+          handler: () => {
+            this.openAddEditAdoptionModal();
+          },
+        },
+        {
+          text: 'Mascota Perdida',
+          icon: 'alert',
+          role: 'lost',
+          handler: () => {
+            this.openAddEditLostModal();
+          },
+        },
+        {
+          text: 'Cancelar',
+          icon: 'return-down-back',
+          role: 'cancel',
+        },
+      ],
+    });
+  }
+  async openAddEditAdoptionModal(adopt?: Adoption) {
     const modal = await this.utilSvc.presentModal({
       component: AddEditAdoptionComponent,
-      componentProps: {adoption: adopt},
+      componentProps: { adoption: adopt },
+      presentingElement: document.querySelector('.page'),
+      canDismiss: this.modalCanDismiss,
+    });
+
+    console.log(modal);
+
+    if (modal && modal.valid) this.loadData();
+  }
+
+  async openAddEditLostModal(lost?: Lost) {
+    const modal = await this.utilSvc.presentModal({
+      component: AddEditLostComponent,
+      componentProps: { lost: lost },
       presentingElement: document.querySelector('.page'),
       canDismiss: this.modalCanDismiss,
     });
@@ -182,11 +234,55 @@ export class HomePage implements OnInit {
     console.log(actRole);
     return actRole === 'confirm';
   };
+
+  async openNfcModal() {
+    console.log('open modal');
+    const modal = await this.utilSvc.presentModal({
+      component: ReadNfcComponent,
+      backdropDismiss: false,
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+      cssClass: 'modal',
+    });
+
+    console.log(modal);
+    if (modal.error) {
+      this.utilSvc.presentAlert({
+        header: 'Lo sentimos',
+        message: modal.error,
+        keyboardClose: true,
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+          },
+        ],
+      });
+    } else if (modal.tag) {
+      this.openScannedChipModal(modal.tag);
+      /* 
+      this.petForm.controls.nfc_id.setValue(this.tag);
+      this.tagtype = typeof this.tag; */
+    }
+  }
+  async openScannedChipModal(chipid) {
+
+    const modal = await this.utilSvc.presentModal({
+      component: ScannedChipComponent,
+      backdropDismiss: false,
+      componentProps: { chipid: chipid},
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+      cssClass: 'modal',
+    });
+
+  }
+
   async getAdoptions() {
     return new Promise<void>((resolve, reject) => {
       let sub = this.firebaseSvc.getCollectionData('adoptions/').subscribe({
         next: (data: any) => {
-          this.adoptions = data;
+          this.adoptions = data.map((item) => ({ ...item, type: 'adoption' }));
           sub.unsubscribe();
           resolve();
         },
@@ -194,4 +290,40 @@ export class HomePage implements OnInit {
       });
     });
   }
+
+  async getLost() {
+    return new Promise<void>((resolve, reject) => {
+      let sub = this.firebaseSvc.getCollectionData('lost/').subscribe({
+        next: (data: any) => {
+          this.lost = data.map((item) => ({ ...item, type: 'lost' }));
+          sub.unsubscribe();
+          resolve();
+        },
+        error: (err) => reject(err),
+      });
+    });
+  }
+
+  async getAllPublications() {
+    try {
+      await Promise.all([this.getAdoptions(), this.getLost()]);
+      this.allPublications = [...this.adoptions, ...this.lost];
+  
+      // Asegúrate de que creation_date es un objeto Date antes de ordenar
+      this.allPublications = this.allPublications.map(item => {
+        return {
+          ...item,
+          creation_date: new Date(item.creation_date)
+        };
+      });
+  
+      // Ordenar publicaciones por fecha (de más reciente a más antiguo)
+      this.allPublications.sort((a, b) => b.creation_date.getTime() - a.creation_date.getTime());
+  
+      console.log(this.allPublications);
+    } catch (error) {
+      console.error('Error fetching publications:', error);
+    }
+  }
+  
 }
